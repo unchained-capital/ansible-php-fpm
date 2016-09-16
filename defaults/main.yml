@@ -37,7 +37,9 @@ php_fpm_ini:
    section: "ldap"
    value: "1"
 
+php_fpm_log_path: /var/log/php5-fpm.log
+
 php_fpm_config:
  - option: "error_log"
    section: "global"
-   value: "/var/log/php5-fpm.log"
+   value: "{{ php_fpm_log_path }}"
