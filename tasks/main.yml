@@ -106,6 +106,25 @@
   changed_when: "result.rc != 0"
   tags: [configuration,php,fpm]
 
+- name: read the sessionclean script
+  shell: cat /usr/lib/php5/sessionclean
+  register: sessionclean_script
+
+  #-rwxr-xr-x 1 root root 1537 Dec 15 21:00 /usr/lib/php5/sessionclean
+- name: Replace the default sessionclean file on Debian trusty
+  template: 
+    src: sessionclean.j2
+    dest: /usr/lib/php5/sessionclean
+    owner: root
+    group: root
+    mode: u=x,g=rx,o=rwx 
+    backup: yes
+  when: sessionclean_script.stdout.find('lsof') != -1
+  notify:
+   - restart php-fpm
+  tags: [configuration,php,fpm]
+
+
 - name: Start the php5-fpm service
   service: name={{ php_fpm_service_name }} state=started enabled=yes
   tags: [service,php,fpm]
